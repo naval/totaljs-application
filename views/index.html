@@ -1,0 +1,79 @@
+@{title('Product List')}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <div class="panel-title">Filters</div>
+    </div>
+
+    <div style="padding-top:30px" class="panel-body">
+        <div style="margin-bottom: 25px" class="input-group">
+            <span class="input-group-addon">Search</span>
+            <input id="title" type="text" class="form-control" name="title" value="">
+        </div>
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Price From" id="price_from"/>
+            <span class="input-group-addon">-</span>
+            <input type="text" class="form-control" placeholder="Price To" id="price_to"/>
+        </div>
+
+
+        <div style="margin-top:10px" class="form-group">
+            <div class="col-sm-12 controls">
+                <button id="search" class="btn btn-success">Search</button>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<div class="row" id="productList">
+
+</div>
+
+<script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var client = algoliasearch('@{config["algolia.appID"]}', '@{config["algolia.adminKey"]}');
+        var index = client.initIndex('products');
+
+        function loadProducts(query, filters) {
+            $('#productList').html('<h3>Loading products.....</h3>');
+            index.search(query, filters || {}, function searchDone(err, results) {
+                if (err) {
+                    console.log('Error=>', err);
+                    $('#productList').html('No product found!');
+                } else {
+                    var products = results.hits;
+                    var rows = '';
+                    products.forEach(function (product) {
+                        rows += '<div class="col-md-4"><div class="thumbnail"><img src="' + product.image_url + '" alt="No image"><div class="caption">' +
+                                '<h4 class="pull-right">' + product.price + '</h4><h4><a href="#">' + product.title + '</a></h4><p>' + product.description +
+                                '</p></div></div></div>';
+                    });
+                    $('#productList').html(rows || 'No product found!');
+
+                }
+            });
+        }
+
+        loadProducts('');
+        $('#search').click(function () {
+            var title = $('#title').val();
+            var price_from = $('#price_from').val();
+            var price_to = $('#price_to').val();
+            var price_filters;
+            if (price_from && !isNaN(price_from)) {
+                price_filters = 'price>=' + price_from;
+            }
+            if (price_to && !isNaN(price_to)) {
+                price_filters = 'price<=' + price_to;
+            }
+            if ((price_from && !isNaN(price_from)) && (price_to && !isNaN(price_to))) {
+                price_filters = 'price>=' + price_from+' AND price<=' + price_to;
+            }
+            loadProducts(title, {filters: price_filters});
+        });
+    });
+</script>

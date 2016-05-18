@@ -1,0 +1,16 @@
+name                            : total.js
+author                          : You company name
+version                         : 1.01
+secret                          : secret-key-for-web
+
+mongodb.url                     : mongodb://localhost:27017/catalog
+algolia.appID                   : QE4OTUKULF
+algolia.adminKey               : a60bf843d9846498bd99135e57d04f8e
+algolia.searchKey              : 03c856f27095ca786b77537464624844
+
+// Mail settings
+mail.smtp                       : smtp.yourwebsite.com
+mail.smtp.options               : {"secure":false,"port":25,"user":"","password":"","timeout":10000}
+mail.address.from               : your@yourwebsite.com
+mail.address.reply              : your@yourwebsite.com
+mail.address.bcc                :
